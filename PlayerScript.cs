@@ -17,6 +17,13 @@ public class PlayerScript : MonoBehaviour
 
     public Text LivesText;
 
+    private int live = 3;
+
+    public Text loseText;
+
+    private GameObject other;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,9 +35,7 @@ public class PlayerScript : MonoBehaviour
 
         SetScoreText();
 
-        LivesText.text = "";
-
-        SetLivesText();
+        SetLifeText();
 
     }
 
@@ -49,15 +54,20 @@ public class PlayerScript : MonoBehaviour
         float vertMovement = Input.GetAxis("Vertical");
         rd2d.AddForce(new Vector2(hozMovement * speed, vertMovement * speed));
     }
-    private void SetLivesText();
    
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.tag == "Coin")
         {
             scoreValue += 1;
             SetScoreText();
+            Destroy(collision.collider.gameObject);
+        }
+        else if (other.gameObject.CompareTag("Enemy"))
+        {
+            other.gameObject.SetActive(false);
+            live = live - 1;
+            SetLifeText();
             Destroy(collision.collider.gameObject);
         }
       
@@ -83,6 +93,14 @@ public class PlayerScript : MonoBehaviour
             winText.text = "You Win! Game Created by Alana Brunson";
         }
     }
-       
+     void SetLifeText()
+    {
+        LivesText.text = "Lives: " + live.ToString();
+        if (live < 1)
+        {
+            loseText.text = " You Lost. ";
+            Destroy(gameObject);
+        }
+    }
 }
 
