@@ -15,17 +15,25 @@ public class PlayerScript : MonoBehaviour
 
     public Text winText;
 
-
+    public Text LivesText;
 
     // Start is called before the first frame update
     void Start()
     {
         rd2d = GetComponent<Rigidbody2D>();
+
         score.text = scoreValue.ToString();
+
         winText.text = "";
+
         SetScoreText();
-        
+
+        LivesText.text = "";
+
+        SetLivesText();
+
     }
+
 
     private void Update()
     {
@@ -41,13 +49,15 @@ public class PlayerScript : MonoBehaviour
         float vertMovement = Input.GetAxis("Vertical");
         rd2d.AddForce(new Vector2(hozMovement * speed, vertMovement * speed));
     }
+    private void SetLivesText();
+   
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.tag == "Coin")
         {
             scoreValue += 1;
-            score.text = scoreValue.ToString();
+            SetScoreText();
             Destroy(collision.collider.gameObject);
         }
       
