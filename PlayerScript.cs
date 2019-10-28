@@ -17,21 +17,28 @@ public class PlayerScript : MonoBehaviour
 
     public Text LivesText;
 
-    private int live = 3;
+    private int live;
 
     public Text loseText;
 
     private GameObject other;
+
+    public AudioClip musicClipOne;
+
+    public AudioClip musicClipTwo;
+
+    public AudioSource musicSource;
 
 
     // Start is called before the first frame update
     void Start()
     {
         rd2d = GetComponent<Rigidbody2D>();
-
+        live = 3;
         score.text = scoreValue.ToString();
 
         winText.text = "";
+        loseText.text = "";
 
         SetScoreText();
 
@@ -46,6 +53,12 @@ public class PlayerScript : MonoBehaviour
         {
             Application.Quit();
         }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            musicSource.loop = true;
+        }
+
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -62,13 +75,22 @@ public class PlayerScript : MonoBehaviour
             scoreValue += 1;
             SetScoreText();
             Destroy(collision.collider.gameObject);
+
+            if (scoreValue == 4)
+            {
+                transform.position = new Vector2(46.0f, 49.28f);
+                live = 3;
+                SetLifeText();
+            }
         }
-        else if (other.gameObject.CompareTag("Enemy"))
+        else if (collision.gameObject.CompareTag("Enemy"))
         {
-            other.gameObject.SetActive(false);
+            
             live = live - 1;
-            SetLifeText();
+            collision.gameObject.SetActive(false);
             Destroy(collision.collider.gameObject);
+            SetLifeText();
+            
         }
       
     }
@@ -88,15 +110,19 @@ public class PlayerScript : MonoBehaviour
    private void SetScoreText()
     {
         score.text = "Score:" + scoreValue.ToString();
-        if (scoreValue >= 4)
+      
+       if (scoreValue >= 8)
         {
             winText.text = "You Win! Game Created by Alana Brunson";
+            musicSource.clip = musicClipTwo;
+            musicSource.Play();
+            musicSource.loop = false;
         }
     }
      void SetLifeText()
     {
         LivesText.text = "Lives: " + live.ToString();
-        if (live < 1)
+        if (live == 0)
         {
             loseText.text = " You Lost. ";
             Destroy(gameObject);
